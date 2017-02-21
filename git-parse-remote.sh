@@ -56,7 +56,8 @@ get_remote_merge_branch () {
 error_on_missing_default_upstream () {
 	cmd="$1"
 	op_type="$2"
-	example="$3"
+	op_prep="$3" # FIXME: op_prep is no longer used
+	example="$4"
 	branch_name=$(git symbolic-ref -q HEAD)
 	display_branch_name="${branch_name#refs/heads/}"
 	# If there's only one remote, use that in the suggestion
