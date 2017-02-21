@@ -1143,6 +1143,22 @@ test_expect_success 'last one wins: three level vars' '
 	test_cmp expect actual
 '
 
+for VAR in a .a a. a.0b a."b c". a."b c".0d
+do
+	test_expect_success "git -c $VAR=VAL rejects invalid '$VAR'" '
+		test_must_fail git -c "$VAR=VAL" config -l
+	'
+done
+
+for VAR in a.b a."b c".d
+do
+	test_expect_success "git -c $VAR=VAL works with valid '$VAR'" '
+		echo VAL >expect &&
+		git -c "$VAR=VAL" config --get "$VAR" >actual &&
+		test_cmp expect actual
+	'
+done
+
 test_expect_success 'git -c is not confused by empty environment' '
 	GIT_CONFIG_PARAMETERS="" git -c x.one=1 config --list
 '
