@@ -279,12 +279,16 @@ void format_decorations_extended(struct strbuf *sb,
 	strbuf_addstr(sb, color_reset);
 }
 
+void show_source(struct rev_info *opt, struct commit *commit)
+{
+	if (opt->show_source && commit->util)
+		fprintf(opt->diffopt.file, "\t%s", (char *) commit->util);
+}
+
 void show_decorations(struct rev_info *opt, struct commit *commit)
 {
 	struct strbuf sb = STRBUF_INIT;
 
-	if (opt->show_source && commit->util)
-		fprintf(opt->diffopt.file, "\t%s", (char *) commit->util);
 	if (!opt->show_decorations)
 		return;
 	format_decorations(&sb, commit, opt->diffopt.use_color);
@@ -556,6 +560,7 @@ void show_log(struct rev_info *opt)
 			show_parents(commit, abbrev_commit, opt->diffopt.file);
 		if (opt->children.name)
 			show_children(opt, commit, abbrev_commit);
+		show_source(opt, commit);
 		show_decorations(opt, commit);
 		if (opt->graph && !graph_is_commit_finished(opt->graph)) {
 			putc('\n', opt->diffopt.file);
@@ -622,6 +627,7 @@ void show_log(struct rev_info *opt)
 			       find_unique_abbrev(parent->object.oid.hash,
 						  abbrev_commit));
 		fputs(diff_get_color_opt(&opt->diffopt, DIFF_RESET), opt->diffopt.file);
+		show_source(opt, commit);
 		if (opt->commit_format == CMIT_FMT_ONELINE) {
 			/* Not at end of line, but.. */
 			if (opt->reflog_info)
