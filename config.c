@@ -241,7 +241,7 @@ static int canonicalize_config_variable_name(char *varname)
 		return -1; /* no section? */
 
 	/* find the last dot (we start from the first dot we just found) */
-	for (; *cp; cp++)
+	for (last_dot = cp; *cp; cp++)
 		if (*cp == '.')
 			last_dot = cp;
 
